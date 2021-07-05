@@ -1,8 +1,23 @@
 .show{
     display: block;
-    width: 100%;
 }
 
 .hide {
     display: none;
 }
+
+.operation-conatiner {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0 10px 0;
+}
+
+.list-unstyled {
+    list-style: none;
+  }
+  
+  .list-unstyled li {
+    display: inline-block;
+    padding: 5px 10px;
+    cursor: pointer;
+  }

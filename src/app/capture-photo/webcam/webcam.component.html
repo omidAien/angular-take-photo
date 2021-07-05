@@ -2,3 +2,16 @@
     <video [class.show]=" !isCaptured " [class.hide]=" isCaptured " #video id="video" autoplay [width]="Width" [height]="Height"></video>
     <canvas [class.show]=" isCaptured " [class.hide]=" !isCaptured " #canvas id="canvas" [width]="Width" [height]="Height"></canvas>
 </div>
+
+<div class="operation-conatiner">
+    <button *ngIf=" !isCaptured " (click)="takePhoto()">Take Photo</button>
+    <button *ngIf=" isCaptured " (click)="removeCurrent()">Remove Current</button>
+</div>
+
+<div class="photo-taked">
+    <ul class="list-unstyled">
+		<li *ngFor="let src of photos; let idx = index" (click)="setPhoto(idx)">
+			<img [src]="src" height="50" />
+        </li>
+	</ul>
+</div>

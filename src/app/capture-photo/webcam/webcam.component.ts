@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { noop, of } from 'rxjs';
 
 @Component({
   selector: 'webcam',
@@ -7,7 +8,7 @@ import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angula
 })
 export class WebcamComponent implements OnInit, AfterViewInit {
 
-  @ViewChild("video") public video: ElementRef<HTMLVideoElement>; 
+  @ViewChild("video") public video: ElementRef; 
   @ViewChild("canvas") public canvas: ElementRef; 
 
   Width:number = 680;
@@ -18,11 +19,11 @@ export class WebcamComponent implements OnInit, AfterViewInit {
 
   hasError:boolean;
   isCaptured:boolean = false;
+  photos: string[] = [];
 
   constructor() { }
 
   ngOnInit() {
-    this.Width = this.windowWidth - 50;
   }
 
   async ngAfterViewInit() {
@@ -55,4 +56,27 @@ export class WebcamComponent implements OnInit, AfterViewInit {
 
   }
 
+  takePhoto() {
+    this.drawImageToCanvas(this.video.nativeElement);
+    this.photos.push(this.canvas.nativeElement.toDataURL("image/png"));
+    this.isCaptured = true;
+  }
+
+  removeCurrent() {
+    this.isCaptured = false;
+  }
+
+  setPhoto(idx: number) {
+    this.isCaptured = true;
+    var image = new Image();
+    image.src = this.photos[idx];
+    this.drawImageToCanvas(image);
+  }
+
+  drawImageToCanvas(image:any) {
+    this.canvas.nativeElement.getContext('2d').drawImage(image, 0, 0, this.Width, this.Height);
+  }
+
 }
+
+
