@@ -1,0 +1,4 @@
+<div class="video-container" *ngIf=" !hasError " >
+    <video [class.show]=" !isCaptured " [class.hide]=" isCaptured " #video id="video" autoplay [width]="Width" [height]="Height"></video>
+    <canvas [class.show]=" isCaptured " [class.hide]=" !isCaptured " #canvas id="canvas" [width]="Width" [height]="Height"></canvas>
+</div>
