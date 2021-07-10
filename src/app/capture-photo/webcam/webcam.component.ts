@@ -59,6 +59,7 @@ export class WebcamComponent implements OnInit, AfterViewInit {
   takePhoto() {
     this.drawImageToCanvas(this.video.nativeElement);
     this.photos.push(this.canvas.nativeElement.toDataURL("image/png"));
+    console.log(this.canvas.nativeElement.toDataURL("image/png"))
     this.isCaptured = true;
   }
 

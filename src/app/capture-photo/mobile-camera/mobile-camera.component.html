@@ -1,0 +1,28 @@
+
+<div class="mobile-camera-container">
+
+    <input type="file" id="photo" #photoSource hidden accept="image/*" capture="camera" (change)="onChangeTakePhoto(photoSource)" />
+    <label for="photo">Take Photo</label>
+
+    
+</div>
+
+
+
+<ng-container *ngIf=" (photoSourceList$ | async) as photoSourceList " >
+
+    <div class="image-gallery-container">
+
+        <div class="image-container" *ngFor="let photoSource of photoSourceList">
+            <img [src]="photoSource" alt="none" height="200">
+            <div class="img-controler">
+                <button (click)="deletePhoto(photoSource)" >Delete</button>
+                <button>select</button>
+            </div>
+        </div>
+
+    </div>
+
+</ng-container>
+
+

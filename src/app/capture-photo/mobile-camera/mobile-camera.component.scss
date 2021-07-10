@@ -1,0 +1,43 @@
+.mobile-camera-container {
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
+}
+
+.mobile-camera-container label {
+    background-color: #80808036;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 1rem;
+}
+
+.image-gallery-container {
+  display: flex;
+  flex-flow: row;
+  flex-wrap: wrap;
+  row-gap: 5px;
+  column-gap: 5px;
+}
+
+.image-gallery-container .image-container {
+  position: relative;
+  width: calc(50% - 5px);
+}
+
+.image-gallery-container .image-container img {
+  object-fit: cover;
+  width: 100%;
+  pointer-events: none;
+  border-radius: 8px;
+}
+
+.image-gallery-container .image-container .img-controler {
+  display: flex;
+  flex-flow: row;
+  column-gap: 5px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 5px;
+  z-index: 1;
+}
