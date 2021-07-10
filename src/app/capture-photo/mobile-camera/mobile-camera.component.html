@@ -16,8 +16,8 @@
         <div class="image-container" *ngFor="let photoSource of photoSourceList; let imgIndex = index">
             <img [src]="photoSource" alt="none" height="200" [id]="imgIndex">
             <div class="image-controler">
-                <button class="image-delete-controler" (click)="deletePhoto(photoSource)">Delete</button>
-                <button class="image-select-controler" (click)="selectPhoto(imgIndex)">select</button>
+                <i class="medium material-icons image-delete-controler" (click)="deletePhoto(photoSource)">delete_outline</i>
+                <i class="medium material-icons image-select-controler" (click)="selectPhoto(imgIndex)">check</i>
             </div>
             <div class="image-selected-symbol"></div>
         </div>

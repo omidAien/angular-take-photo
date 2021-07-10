@@ -52,12 +52,12 @@ export class MobileCameraComponent implements OnInit {
     
     const parentElement = (selectedImage.parentElement)! as HTMLDivElement;
 
-    // hidden button.image-select-controler
-    const imageSelectControler = parentElement.querySelector("button.image-select-controler")! as HTMLButtonElement;
+    // hidden i.image-select-controler
+    const imageSelectControler = parentElement.querySelector("i.image-select-controler")! as HTMLElement;
     imageSelectControler.classList.add("deactive");
 
-    // hidden button.image-select-controler
-    const imageDeleteControler = parentElement.querySelector("button.image-delete-controler")! as HTMLButtonElement;
+    // hidden i.image-delete-controler
+    const imageDeleteControler = parentElement.querySelector("i.image-delete-controler")! as HTMLElement;
     imageDeleteControler.classList.add("deactive");
 
     // show div.image-selected-symbol
