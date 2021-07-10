@@ -9,16 +9,12 @@
 
 
 
-<ng-container *ngIf=" (photoSourceList$ | async) as photoSourceList " >
+<ng-container *ngIf=" (readablePhotoList$ | async) as readablePhotoList " >
 
     <div class="image-gallery-container">
 
-        <div class="image-container" *ngFor="let photoSource of photoSourceList; let imgIndex = index">
-            <img [src]="photoSource" alt="none" height="200" [id]="imgIndex">
-            <div class="image-controler">
-                <i class="medium material-icons image-delete-controler" (click)="deletePhoto(photoSource)">delete_outline</i>
-                <i class="medium material-icons image-select-controler" (click)="selectPhoto(imgIndex)">check</i>
-            </div>
+        <div class="image-container" *ngFor="let photoSource of readablePhotoList; let imgIndex = index">
+            <img [src]="photoSource" alt="none" height="200" [id]="imgIndex" (click)="selectPhoto(imgIndex)">
             <div class="image-selected-symbol"></div>
         </div>
 
@@ -27,3 +23,4 @@
 </ng-container>
 
 
+{{ (selectedPhotoList$ | async) }}

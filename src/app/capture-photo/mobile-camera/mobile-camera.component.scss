@@ -27,35 +27,13 @@
 .image-gallery-container .image-container img {
   object-fit: cover;
   width: 100%;
-  pointer-events: none;
   border-radius: 8px;
-}
-
-.image-gallery-container .image-container .image-controler {
-  display: flex;
-  flex-flow: row;
-  column-gap: 5px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  margin: 5px;
-  z-index: 1;
-}
-
-.image-gallery-container .image-container .image-controler .image-delete-controler {
-  color: red;
-  font-weight: bold;
-}
-
-.image-gallery-container .image-container .image-controler .image-select-controler {
-  color: green;
-  font-weight: bold;
 }
 
 .image-gallery-container .image-container .image-selected-symbol {
   display: none;
   position: absolute;
-  bottom: 1em;
+  top: 1em;
   right: 1em;
   width: 20px;
   height: 20px;
@@ -70,7 +48,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 10px;
+  font-size: 12px !important;
 }
 
 .active {
@@ -79,4 +57,10 @@
 
 .deactive {
   display: none !important;
+}
+
+@media screen and (max-width:414px) {
+  .image-gallery-container .image-container .image-selected-symbol::after {
+    font-size: 11px !important;
+  }
 }

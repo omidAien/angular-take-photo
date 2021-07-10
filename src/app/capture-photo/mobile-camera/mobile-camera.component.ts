@@ -1,6 +1,6 @@
-import { Renderer2 } from '@angular/core';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators'
 
 @Component({
   selector: 'mobile-camera',
@@ -9,10 +9,19 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class MobileCameraComponent implements OnInit {
 
-  private subject = new BehaviorSubject<(string | ArrayBuffer)[]>([]);
-  public photoSourceList$ = this.subject.asObservable();
+  private photoReadersubject = new BehaviorSubject<(string | ArrayBuffer)[]>([]);
+  public readablePhotoList$ = this.photoReadersubject.asObservable();
 
-  constructor(private render: Renderer2) { }
+  private filePhotoListSubject = new BehaviorSubject<{}[]>([]);
+  public filePhotoList$ = this.filePhotoListSubject.asObservable()
+                              .pipe(
+                                map(data => data.length)
+                              );
+
+  private selectFilePhotoListSubject = new BehaviorSubject<{}[]>([]);
+  public selectedPhotoList$ = this.selectFilePhotoListSubject.asObservable();
+
+  constructor() { }
 
   ngOnInit() {
   }
@@ -28,9 +37,21 @@ export class MobileCameraComponent implements OnInit {
       
       reader.onload = (e) => { 
         const imageUrl = reader.result;
-  
-        this.subject.next([...this.subject.getValue(), imageUrl]); 
-  
+        this.photoReadersubject.next([...this.photoReadersubject.getValue(), imageUrl]); 
+
+        const countImage = this.photoReadersubject.getValue().length;
+        let newFilePhoto = {};
+        const key = "image_" + countImage;
+        newFilePhoto[key] = photoSourceObj;
+
+        if ( !!this.filePhotoListSubject.getValue() ) {
+          this.filePhotoListSubject.next([...this.filePhotoListSubject.getValue() , newFilePhoto]);
+        }
+        else {
+          this.filePhotoListSubject.next([newFilePhoto]);
+        }
+        
+
       };
 
     }
@@ -38,31 +59,62 @@ export class MobileCameraComponent implements OnInit {
   }
 
   deletePhoto(photoSource:string) {
-    const photoSourceList = this.subject.getValue();
-    const _index = photoSourceList.indexOf(photoSource);
+    const readablePhotoList = this.photoReadersubject.getValue();
+    const _index = readablePhotoList.indexOf(photoSource);
     
-    const newPhotoSourceList = photoSourceList.filter((value, index) => index !== _index);
+    const newReadablePhotoList = readablePhotoList.filter((value, index) => index !== _index);
 
-    this.subject.next(newPhotoSourceList);
+    this.photoReadersubject.next(newReadablePhotoList);
 
   }
 
   selectPhoto(imgIndex:number) {
     const selectedImage = document.getElementById(`${imgIndex}`)! as HTMLImageElement;
+    const _key:string = `image_` + (imgIndex + 1);
     
+     
+    const filePhotoListSubject = this.filePhotoListSubject.getValue();
+    const selectFilePhotoListSubject = this.selectFilePhotoListSubject.getValue();
+
+    let selectedFilePhoto;
+
+    filePhotoListSubject.filter(objPhoto => {
+      if ( Object.keys(objPhoto)[0] === _key ) {
+        selectedFilePhoto = objPhoto;
+      }
+    });
+
+    if ( selectFilePhotoListSubject.length > 0 ) {
+
+      selectFilePhotoListSubject.map(objPhoto => {
+        if ( Object.keys(objPhoto)[0] === _key ) {
+          
+          const newSelectFilePhotoListSubject = selectFilePhotoListSubject.filter(objPhoto => Object.keys(objPhoto)[0] !== _key);
+          this.selectFilePhotoListSubject.next(newSelectFilePhotoListSubject);
+
+        }
+      });
+
+    }
+    else {
+      this.selectFilePhotoListSubject.next([selectedFilePhoto]);
+    }
+
+
+    // 2. show div.image-selected-symbol
     const parentElement = (selectedImage.parentElement)! as HTMLDivElement;
-
-    // hidden i.image-select-controler
-    const imageSelectControler = parentElement.querySelector("i.image-select-controler")! as HTMLElement;
-    imageSelectControler.classList.add("deactive");
-
-    // hidden i.image-delete-controler
-    const imageDeleteControler = parentElement.querySelector("i.image-delete-controler")! as HTMLElement;
-    imageDeleteControler.classList.add("deactive");
-
-    // show div.image-selected-symbol
     const imageSelectedSymbol = parentElement.querySelector("div.image-selected-symbol")! as HTMLDivElement;
-    imageSelectedSymbol.classList.add("active");
+
+    if ( imageSelectedSymbol.classList.contains("active") ) {
+      imageSelectedSymbol.classList.remove("active");
+      imageSelectedSymbol.classList.add("deactive");
+    }
+    else {
+      imageSelectedSymbol.classList.remove("deactive");
+      imageSelectedSymbol.classList.add("active");
+    }
+
+    console.log(this.selectFilePhotoListSubject.getValue())
 
   }
 
