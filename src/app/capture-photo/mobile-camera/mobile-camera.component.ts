@@ -1,3 +1,4 @@
+import { Renderer2 } from '@angular/core';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
@@ -11,9 +12,7 @@ export class MobileCameraComponent implements OnInit {
   private subject = new BehaviorSubject<(string | ArrayBuffer)[]>([]);
   public photoSourceList$ = this.subject.asObservable();
 
-  imageUrl:string | ArrayBuffer;
-
-  constructor() { }
+  constructor(private render: Renderer2) { }
 
   ngOnInit() {
   }
@@ -28,9 +27,9 @@ export class MobileCameraComponent implements OnInit {
       reader.readAsDataURL(photoSourceObj);
       
       reader.onload = (e) => { 
-        this.imageUrl = reader.result;
+        const imageUrl = reader.result;
   
-        this.subject.next([...this.subject.getValue(), this.imageUrl]); 
+        this.subject.next([...this.subject.getValue(), imageUrl]); 
   
       };
 
@@ -45,6 +44,25 @@ export class MobileCameraComponent implements OnInit {
     const newPhotoSourceList = photoSourceList.filter((value, index) => index !== _index);
 
     this.subject.next(newPhotoSourceList);
+
+  }
+
+  selectPhoto(imgIndex:number) {
+    const selectedImage = document.getElementById(`${imgIndex}`)! as HTMLImageElement;
+    
+    const parentElement = (selectedImage.parentElement)! as HTMLDivElement;
+
+    // hidden button.image-select-controler
+    const imageSelectControler = parentElement.querySelector("button.image-select-controler")! as HTMLButtonElement;
+    imageSelectControler.classList.add("deactive");
+
+    // hidden button.image-select-controler
+    const imageDeleteControler = parentElement.querySelector("button.image-delete-controler")! as HTMLButtonElement;
+    imageDeleteControler.classList.add("deactive");
+
+    // show div.image-selected-symbol
+    const imageSelectedSymbol = parentElement.querySelector("div.image-selected-symbol")! as HTMLDivElement;
+    imageSelectedSymbol.classList.add("active");
 
   }
 

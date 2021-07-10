@@ -31,7 +31,7 @@
   border-radius: 8px;
 }
 
-.image-gallery-container .image-container .img-controler {
+.image-gallery-container .image-container .image-controler {
   display: flex;
   flex-flow: row;
   column-gap: 5px;
@@ -40,4 +40,33 @@
   left: 0;
   margin: 5px;
   z-index: 1;
+}
+
+.image-gallery-container .image-container .image-selected-symbol {
+  display: none;
+  position: absolute;
+  bottom: 1em;
+  right: 1em;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 3px solid green;
+  background-color: white;
+  
+}
+
+.image-gallery-container .image-container .image-selected-symbol::after {
+  content: "✔";
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 10px;
+}
+
+.active {
+  display: block !important;
+}
+
+.deactive {
+  display: none !important;
 }
