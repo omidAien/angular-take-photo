@@ -1,6 +1,6 @@
 # TakePhoto
 
-You can access mobile camera without using MediaStream Image Capture API. In this practice, we can take multiple photos and select each of them by selecting on them, select all photos and delete all of them.
+You can access mobile camera without using MediaStream Image Capture API. In this practice, we can take multiple photos and select each of them by selecting on them, select all photos and delete all of them.This Program only work on Mobile and tablet Devices.
 
 This project was generated with Angular CLI version 11.1.2.
 
