@@ -1,5 +1,7 @@
 
-<span>Number of photos selected is : {{ (selectedPhotoList$ | async) }}</span>
+<div class="submit-container">
+    <span>Number of photos selected is : {{ (selectedPhotoList$ | async) }}</span>
+</div>
 
 <ng-container *ngIf=" (readablePhotoList$ | async) as readablePhotoList " >
 
@@ -18,12 +20,17 @@
 
     </div>
 
+    <div class="mobile-camera-container">
+
+        <input type="file" id="photo" #photoSource hidden accept="image/*" capture="camera" (change)="TakePhoto(photoSource)" />
+    
+        <label class="select-all" (click)="selectAllPhoto()" >Select All</label>
+        <label for="photo" class="take-photo">Take Photo</label>
+        <label class="delete-all" (click)="deleteAllPhoto()">Delete All</label>
+    
+    </div>
+
 </ng-container>
 
-<div class="mobile-camera-container">
 
-    <input type="file" id="photo" #photoSource hidden accept="image/*" capture="camera" (change)="TakePhoto(photoSource)" />
-    <label for="photo" id="take-photo" >Take Photo</label>
-
-</div>
 

@@ -22,6 +22,8 @@ export class MobileCameraComponent implements OnInit {
                                     map((data) => data.length)
                                   );
 
+  selectAllPhotoStatus:boolean = false;
+
   constructor() { }
 
   ngOnInit() {}
@@ -65,18 +67,10 @@ export class MobileCameraComponent implements OnInit {
 
   }
 
-  deletePhoto(photoSource:string) {
-    const readablePhotoList = this.photoReadersubject.getValue();
-    const _index = readablePhotoList.indexOf(photoSource);
-    
-    const newReadablePhotoList = readablePhotoList.filter((value, index) => index !== _index);
-
-    this.photoReadersubject.next(newReadablePhotoList);
-
-  }
-
   selectPhoto(imgKey:string) {
-    
+
+    this.selectAllPhotoStatus = false;
+
     const selectFilePhotoListSubject = this.selectFilePhotoListSubject.getValue();
 
     if ( !this.photoIsSelected(imgKey) ) {
@@ -88,8 +82,8 @@ export class MobileCameraComponent implements OnInit {
       const newSelectFilePhotoListSubject = selectFilePhotoListSubject.filter(photoObj => Object.keys(photoObj)[0] !== imgKey);
       this.selectFilePhotoListSubject.next(newSelectFilePhotoListSubject)
     }
-   
-    // 2. show div.image-selected-symbol
+     
+    // show div.image-selected-symbol
     this.imageSelectSymboleHandler(imgKey);
 
   }
@@ -138,6 +132,65 @@ export class MobileCameraComponent implements OnInit {
       imageSelectedSymbol.classList.add("active");
     }
 
+  }
+
+  resetImageSelectSymboleHandler(imgKey:string) {
+
+    const selectedImage = document.getElementById(`${imgKey}`)! as HTMLImageElement;
+    const parentElement = (selectedImage.parentElement)! as HTMLDivElement;
+    const imageSelectedSymbol = parentElement.querySelector("div.image-selected-symbol")! as HTMLDivElement;
+
+    imageSelectedSymbol.classList?.remove("active");
+    imageSelectedSymbol.classList?.remove("deactive");
+
+  }
+
+  deleteAllPhoto() {
+
+    this.selectAllPhotoStatus = false;
+    this.photoReadersubject.next([]);
+    this.filePhotoListSubject.next([]);
+    this.selectFilePhotoListSubject.next([]);
+
+  }
+
+  selectAllPhoto() {
+
+    const photoReadersubjectLength = this.photoReadersubject.getValue().length;
+
+    if ( photoReadersubjectLength > 0 ) {
+
+      if ( !this.selectAllPhotoStatus ) {
+
+        this.selectAllPhotoStatus = true;
+        let result = [];
+
+        // remove all selected photo from selectFilePhotoListSubject
+        this.selectFilePhotoListSubject.next([]);
+  
+        this.filePhotoListSubject.getValue().map((photoObj) => {
+    
+          const imgKey = Object.keys(photoObj)[0];
+
+          // remove active and deactive css class from each div.image-selected-symbol
+          this.resetImageSelectSymboleHandler(imgKey);
+
+          // find photo from filePhotoListSubject by imgKey
+          result.push(this.findFilePhotoByKey(imgKey));
+
+          // perform imageSelectSymboleHandler on each div.image-selected-symbol in order to which 'active' or 'deactive' css class
+          // should be added to each div.image-selected-symbol
+          this.imageSelectSymboleHandler(imgKey);
+    
+        });
+    
+        // update selectFilePhotoListSubject with new value
+        this.selectFilePhotoListSubject.next(result);
+  
+      }
+
+    }
+    
   }
 
 }
