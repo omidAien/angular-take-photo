@@ -1,6 +1,7 @@
 
 <div class="submit-container">
     <span>Number of photos selected is : {{ (selectedPhotoList$ | async) }}</span>
+    <button>Send</button>
 </div>
 
 <ng-container *ngIf=" (readablePhotoList$ | async) as readablePhotoList " >
