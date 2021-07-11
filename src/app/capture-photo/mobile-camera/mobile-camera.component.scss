@@ -2,6 +2,14 @@
   display: flex;
   flex-flow: row;
   justify-content: center;
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, 0);
+  width: 100%;
+  background-color: beige;
+  z-index: 10;
+  height: 80px;
 }
 
 .mobile-camera-container label {
@@ -17,6 +25,9 @@
   flex-wrap: wrap;
   row-gap: 5px;
   column-gap: 5px;
+  max-height: calc(100vh - 200px);
+  overflow: auto;
+  margin-top: 5px;
 }
 
 .image-gallery-container .image-container {

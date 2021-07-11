@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators'
+import { Component, OnInit, DoCheck } from '@angular/core';
+import { BehaviorSubject, noop } from 'rxjs';
+import { finalize, map, tap } from 'rxjs/operators'
 
 @Component({
   selector: 'mobile-camera',
@@ -12,21 +12,21 @@ export class MobileCameraComponent implements OnInit {
   private photoReadersubject = new BehaviorSubject<(string | ArrayBuffer)[]>([]);
   public readablePhotoList$ = this.photoReadersubject.asObservable();
 
+
   private filePhotoListSubject = new BehaviorSubject<{}[]>([]);
-  public filePhotoList$ = this.filePhotoListSubject.asObservable()
-                              .pipe(
-                                map(data => data.length)
-                              );
+  public filePhotoList$ = this.filePhotoListSubject.asObservable();
 
   private selectFilePhotoListSubject = new BehaviorSubject<{}[]>([]);
-  public selectedPhotoList$ = this.selectFilePhotoListSubject.asObservable();
+  public selectedPhotoList$ = this.selectFilePhotoListSubject.asObservable()
+                                  .pipe(
+                                    map((data) => data.length)
+                                  );
 
   constructor() { }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
-  onChangeTakePhoto(photoSource: HTMLInputElement) {
+  TakePhoto(photoSource: HTMLInputElement) {
 
     const photoSourceObj = photoSource.files[0];
 
@@ -37,23 +37,30 @@ export class MobileCameraComponent implements OnInit {
       
       reader.onload = (e) => { 
         const imageUrl = reader.result;
+
         this.photoReadersubject.next([...this.photoReadersubject.getValue(), imageUrl]); 
 
-        const countImage = this.photoReadersubject.getValue().length;
-        let newFilePhoto = {};
-        const key = "image_" + countImage;
-        newFilePhoto[key] = photoSourceObj;
+        const photoReadersubjectLength = this.photoReadersubject.getValue().length;
 
-        if ( !!this.filePhotoListSubject.getValue() ) {
-          this.filePhotoListSubject.next([...this.filePhotoListSubject.getValue() , newFilePhoto]);
-        }
-        else {
-          this.filePhotoListSubject.next([newFilePhoto]);
-        }
-        
+        this.filePhotoHandler(photoSourceObj, photoReadersubjectLength);
 
       };
 
+    }
+
+  }
+
+  filePhotoHandler(photoSourceObj: File, index:number) {
+
+    let newFilePhoto = {};
+    const key = "image_" + index;
+    newFilePhoto[key] = photoSourceObj;
+
+    if ( !!this.filePhotoListSubject.getValue() ) {
+      this.filePhotoListSubject.next([...this.filePhotoListSubject.getValue() , newFilePhoto]);
+    }
+    else {
+      this.filePhotoListSubject.next([newFilePhoto]);
     }
 
   }
@@ -68,40 +75,57 @@ export class MobileCameraComponent implements OnInit {
 
   }
 
-  selectPhoto(imgIndex:number) {
-    const selectedImage = document.getElementById(`${imgIndex}`)! as HTMLImageElement;
-    const _key:string = `image_` + (imgIndex + 1);
+  selectPhoto(imgKey:string) {
     
-     
-    const filePhotoListSubject = this.filePhotoListSubject.getValue();
     const selectFilePhotoListSubject = this.selectFilePhotoListSubject.getValue();
 
-    let selectedFilePhoto;
+    if ( !this.photoIsSelected(imgKey) ) {
+      // if the photo has not selected previously, we add it to selectFilePhotoListSubject when user click on photo
+      this.selectFilePhotoListSubject.next([...selectFilePhotoListSubject, this.findFilePhotoByKey(imgKey)]);
+    }
+    else {
+      // if the photo has selected previously, we remove it from selectFilePhotoListSubject when user click on photo again
+      const newSelectFilePhotoListSubject = selectFilePhotoListSubject.filter(photoObj => Object.keys(photoObj)[0] !== imgKey);
+      this.selectFilePhotoListSubject.next(newSelectFilePhotoListSubject)
+    }
+   
+    // 2. show div.image-selected-symbol
+    this.imageSelectSymboleHandler(imgKey);
+
+  }
+
+  findFilePhotoByKey(key:string) {
+
+    const filePhotoListSubject = this.filePhotoListSubject.getValue();
+    let selectedFilePhoto = {};
 
     filePhotoListSubject.filter(objPhoto => {
-      if ( Object.keys(objPhoto)[0] === _key ) {
+      if ( Object.keys(objPhoto)[0] === key ) {
         selectedFilePhoto = objPhoto;
       }
     });
 
-    if ( selectFilePhotoListSubject.length > 0 ) {
+    return selectedFilePhoto
 
-      selectFilePhotoListSubject.map(objPhoto => {
-        if ( Object.keys(objPhoto)[0] === _key ) {
-          
-          const newSelectFilePhotoListSubject = selectFilePhotoListSubject.filter(objPhoto => Object.keys(objPhoto)[0] !== _key);
-          this.selectFilePhotoListSubject.next(newSelectFilePhotoListSubject);
+  }
 
-        }
+  photoIsSelected(key:string):boolean {
+
+    const selectFilePhotoListSubject = this.selectFilePhotoListSubject.getValue();
+    let result:boolean = false;
+
+    selectFilePhotoListSubject.map(objPhoto => {
+      if ( Object.keys(objPhoto)[0] === key ) 
+        result = true
       });
 
-    }
-    else {
-      this.selectFilePhotoListSubject.next([selectedFilePhoto]);
-    }
+    return result
+    
+  }
 
+  imageSelectSymboleHandler(imgKey:string) {
 
-    // 2. show div.image-selected-symbol
+    const selectedImage = document.getElementById(`${imgKey}`)! as HTMLImageElement;
     const parentElement = (selectedImage.parentElement)! as HTMLDivElement;
     const imageSelectedSymbol = parentElement.querySelector("div.image-selected-symbol")! as HTMLDivElement;
 
@@ -113,8 +137,6 @@ export class MobileCameraComponent implements OnInit {
       imageSelectedSymbol.classList.remove("deactive");
       imageSelectedSymbol.classList.add("active");
     }
-
-    console.log(this.selectFilePhotoListSubject.getValue())
 
   }
 

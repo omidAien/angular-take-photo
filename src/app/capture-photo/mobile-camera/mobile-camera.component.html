@@ -1,20 +1,18 @@
 
-<div class="mobile-camera-container">
-
-    <input type="file" id="photo" #photoSource hidden accept="image/*" capture="camera" (change)="onChangeTakePhoto(photoSource)" />
-    <label for="photo">Take Photo</label>
-
-    
-</div>
-
-
+<span>Number of photos selected is : {{ (selectedPhotoList$ | async) }}</span>
 
 <ng-container *ngIf=" (readablePhotoList$ | async) as readablePhotoList " >
 
     <div class="image-gallery-container">
 
         <div class="image-container" *ngFor="let photoSource of readablePhotoList; let imgIndex = index">
-            <img [src]="photoSource" alt="none" height="200" [id]="imgIndex" (click)="selectPhoto(imgIndex)">
+            
+            <img [src]="photoSource" 
+                 alt="none" 
+                 height="200" 
+                 [id]=" 'image_' + (imgIndex + 1) " 
+                 (click)="selectPhoto('image_' + (imgIndex + 1))">
+
             <div class="image-selected-symbol"></div>
         </div>
 
@@ -22,5 +20,10 @@
 
 </ng-container>
 
+<div class="mobile-camera-container">
 
-{{ (selectedPhotoList$ | async) }}
+    <input type="file" id="photo" #photoSource hidden accept="image/*" capture="camera" (change)="TakePhoto(photoSource)" />
+    <label for="photo" id="take-photo" >Take Photo</label>
+
+</div>
+
