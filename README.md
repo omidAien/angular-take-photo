@@ -6,6 +6,8 @@ This project was generated with Angular CLI version 11.1.2.
 
 https://stackblitz.com/github/omidAien/angular-take-photo
 
+https://takephoto.netlify.app/
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
